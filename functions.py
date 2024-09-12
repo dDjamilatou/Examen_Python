@@ -76,21 +76,62 @@ def get_student_data():
     # print (student)
     students.append(student)
 
+
 def display_students(students_list):
     if not students_list:
         print("Aucun étudiant n'est enregistré.")
         return
 
-    print("{:<15} {:<15} {:<10} {:<15} {:<10} {:<10} {:<10} {:<15}".format(
+    print("{:<15} {:<15} {:<10} {:<15} {:<10} {:<10} {:<10} {:<17}".format(
          "Prénom", "Nom", "Classe", "Téléphone", "Devoir", "Projet", "Examen", "Moyenne"))
     print("-" * 100)
     for student in students_list:
-        print("{:<15} {:<15} {:<10} {:<15} {:<10.2f} {:<10.2f} {:<10.2f} {:<15.2f}".format(
+        print("{:<15} {:<15} {:<10} {:<15} {:<10.2f} {:<10.2f} {:<10.2f} {:<17.2f}".format(
             student["prenom"], student["nom"], student["classe"], student["phone"],
             student["note_devoir"], student["note_projet"], student["note_examen"], student["moyenne"]
         ))
 
-display_students(students)
+
+def sort_and_display():
+    sorted_students = sorted(students, key=lambda x: x["moyenne"], reverse=True)
+    display_students(sorted_students)
+
+
+def search_student(criteria, value):
+    results = [student for student in students if student[criteria] == value]
+    display_students(results)
+
+
+def modify_student_notes(phone):
+    student = next((student for student in students if student["phone"] == phone), None)
+    if not student:
+        print("Étudiant non trouvé.")
+        return
+
+    while True:
+        note_devoir = input("Entrez la nouvelle note du devoir (0-20) : ")
+        if validate_note(note_devoir):
+            student["note_devoir"] = float(note_devoir)
+            break
+        print("Note invalide. Veuillez réessayer.")
+
+    while True:
+        note_projet = input("Entrez la nouvelle note du projet (0-20) : ")
+        if validate_note(note_projet):
+            student["note_projet"] = float(note_projet)
+            break
+        print("Note invalide. Veuillez réessayer.")
+
+    while True:
+        note_examen = input("Entrez la nouvelle note de l'examen (0-20) : ")
+        if validate_note(note_examen):
+            student["note_examen"] = float(note_examen)
+            break
+        print("Note invalide. Veuillez réessayer.")
+
+    student["moyenne"] = round((student["note_devoir"] + student["note_projet"] + student["note_examen"]) / 3, 2)
+    print("Notes mises à jour avec succès.")
+
 
 
 
